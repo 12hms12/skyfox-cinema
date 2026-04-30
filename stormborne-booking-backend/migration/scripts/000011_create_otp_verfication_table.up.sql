@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS otp_verification (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(10) NOT NULL,
+    recipient VARCHAR(255) NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    purpose VARCHAR(50) NOT NULL DEFAULT 'VERIFICATION',
+    expires_at TIMESTAMP NOT NULL,
+    attempts INT DEFAULT 0,
+    is_used BOOLEAN DEFAULT FALSE,
+    ip VARCHAR(45),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

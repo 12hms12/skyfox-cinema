@@ -1,0 +1,8 @@
+version: 1
+registry_credentials:
+  catalyst_gitlab_registry:
+    username: ${GITLAB_REGISTRY_USERNAME}
+    password: ${GITLAB_REGISTRY_PASSWORD}
+    container_names:
+      - db
+      - web

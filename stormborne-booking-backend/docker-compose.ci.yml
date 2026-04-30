@@ -1,0 +1,47 @@
+version: '3.0'
+services:
+  stormborne-booking-backend-migration:
+    image: stormborne-booking-backend-migration
+    build:
+      context: .
+      dockerfile: Dockerfile-migration
+      args:
+        - REGISTRY_URI= # private info
+    container_name: migration
+    environment:
+      - DB_NAME=bookingengine
+      - POSTGRES_USERNAME=bookingengine
+      - DB_HOST=db
+      - UI_HOST=http://localhost:3000
+      - DB_PORT=5432
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - skyfoxnet
+
+  stormborne-booking-backend:
+    image: stormborne-booking-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - REGISTRY_URI= # private info
+    container_name: app
+    environment:
+      - DB_NAME=bookingengine
+      - POSTGRES_USERNAME=bookingengine
+      - DB_HOST=db
+      - UI_HOST=http://localhost:3000
+      - DB_PORT=5432
+      - POSTGRES_PASSWORD=postgres
+      - SERVER_PORT=8080
+      - TOKEN_TTL=1800
+      - TOKEN_SECRET=mysecret
+      - WebClientResetPasswordBaseUrl=http://localhost:3000/reset-password?token=
+    ports:
+      - "8080:8080"
+    networks:
+      - skyfoxnet
+
+networks:
+  skyfoxnet: {}
+  

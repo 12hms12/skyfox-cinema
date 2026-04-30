@@ -1,0 +1,2 @@
+ALTER TABLE "booking"
+ADD COLUMN is_checked_in BOOLEAN DEFAULT FALSE;

@@ -1,0 +1,109 @@
+version: '3.0'
+services:
+  db:
+    image: "${POSTGRES_IMAGE}"
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+        reservations:
+          memory: 100M
+    container_name: db_${ENVIRONMENT}
+    ports:
+      - "${HOST_DB_PORT}:5432"
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}", "-p", "5432"]
+      timeout: 45s
+      interval: 10s
+      retries: 5
+    volumes:
+      - /var/pgdata/team${TEAM_ID}-${ENVIRONMENT}:/var/lib/postgresql/data
+    networks:
+      - skyfoxnet
+
+  migration:
+    image: "${MIGRATION_IMAGE}"
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+        reservations:
+          memory: 150M
+    container_name: migration_${ENVIRONMENT}
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - DB_NAME=${DB_NAME}
+      - UI_HOST=${UI_HOST}
+      - MOVIE_SERVICE_HOST=${MOVIE_SERVICE_HOST}
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - skyfoxnet
+
+  movieservice:
+    image: "442042547957.dkr.ecr.ap-south-1.amazonaws.com/neev-movie-service:latest"
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+        reservations:
+          memory: 150M
+    container_name: movieservice_${ENVIRONMENT}
+    networks:
+      - skyfoxnet
+
+  app:
+    image: "${BOOKING_IMAGE}"
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+        reservations:
+          memory: 150M
+    container_name: backend_${ENVIRONMENT}
+    environment:
+      - SERVER_PORT=${BACKEND_PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - DB_NAME=${DB_NAME}
+      - UI_HOST=${UI_HOST}
+      - MOVIE_SERVICE_HOST=${MOVIE_SERVICE_HOST}
+    healthcheck:
+      test: ["CMD-SHELL", "/bin/bash", "/healthcheck.sh", "localhost", "${BACKEND_PORT}", "${VERSION}"]
+      interval: 10s
+      timeout: 30s
+      retries: 3
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    networks:
+      - skyfoxnet
+#    logging:
+#      driver: "awslogs"
+#      options:
+#        awslogs-region: "ap-south-1"
+#        awslogs-create-group: "true"
+#        awslogs-group: "catalyst-log-group"
+#        awslogs-stream-prefix: "${ENVIRONMENT}-catalyst"
+networks:
+  skyfoxnet:
+    external: true
+    name: skyfox-${ENVIRONMENT}

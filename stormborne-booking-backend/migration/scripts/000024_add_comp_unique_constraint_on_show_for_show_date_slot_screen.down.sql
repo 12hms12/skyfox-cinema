@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS idx_show_screen_date_slot;

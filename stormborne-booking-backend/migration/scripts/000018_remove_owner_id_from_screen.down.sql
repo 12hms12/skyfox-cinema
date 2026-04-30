@@ -1,0 +1,2 @@
+ALTER TABLE screen
+ADD COLUMN owner_id INT;

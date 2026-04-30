@@ -1,0 +1,22 @@
+Server:
+  Port: 8080
+  ReadTimeout: 5
+  WriteTimeout: 5
+  GineMode: debug
+
+Database:
+  Host: test-db
+  Port: 5432
+  Name: bookingtest
+  User: bookingtest
+  Password: postgres
+  MigrationPath: database/migrations/scripts
+
+Logger:
+  Level: debug
+
+MovieGateway:
+  UiHost: http://localhost:3000
+  MovieServiceHost: http://localhost:4567/
+
+DB_PASSWORD: 

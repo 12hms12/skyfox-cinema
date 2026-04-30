@@ -1,0 +1,3 @@
+ALTER TABLE show
+ALTER COLUMN date TYPE VARCHAR(255) 
+USING to_char(date, 'YYYY-MM-DD');

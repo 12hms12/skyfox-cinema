@@ -1,0 +1,5 @@
+ALTER TABLE online_customers
+ADD column IF NOT EXISTS is_email_verified BOOLEAN NOT NULL DEFAULT FALSE;
+
+ALTER TABLE online_customers
+ADD COLUMN IF NOT EXISTS is_phone_verified BOOLEAN NOT NULL DEFAULT FALSE;

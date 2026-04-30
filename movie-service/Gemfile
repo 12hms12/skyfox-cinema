@@ -1,0 +1,8 @@
+source 'https://rubygems.org'
+
+gem 'unicorn'
+gem 'aphorism'
+gem 'color-generator'
+gem 'rack'
+gem 'json'
+gem 'sinatra'

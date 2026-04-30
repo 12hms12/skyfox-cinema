@@ -1,0 +1,11 @@
+*.log
+.idea
+
+out/
+vendor/
+.vscode/
+out/
+.talismanrc
+go.sum
+env
+vendor/

@@ -1,0 +1,17 @@
+version: '3.0'
+services:
+  movie-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: movie-service
+    ports:
+      - "4567:4567"
+    networks:
+      - skyfoxnet
+    environment:
+      - PORT=4567
+
+networks:
+  skyfoxnet:
+    name: skyfoxnet
